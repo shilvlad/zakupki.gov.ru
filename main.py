@@ -1,10 +1,24 @@
 import os
 import  ftp
-import sqlite3
+import sqlite3, clear
 from lxml import etree
 
+from profiling import time_of_function
+
+
 if __name__ == "__main__":
-    ftp.download_files('_2018')
+
+    clear.clean_dir('moskva')
+
+
+    clear.clean_dir('moskva\\unziped')
+    years = ['_2018', '_2019']
+    for year in years:
+        print(year)
+
+
+        ftp.download_files(year)
+
     xml_files = os.listdir(os.path.join(r"moskva", r"unziped"))
     #conn = sqlite3.connect(":memory:")  # или :memory: чтобы сохранить в RAM
     try:
@@ -22,7 +36,10 @@ if __name__ == "__main__":
         xml_file = os.path.join(r"moskva", r"unziped", xml_file)
         print("XML:",xml_file)
 
-        tree = etree.parse(xml_file)
+        try:
+            tree = etree.parse(xml_file)
+        except Exception:
+            continue
         #for i in tree.findall('.//'):
         #    print (i)
 
@@ -60,9 +77,11 @@ if __name__ == "__main__":
             lot_currency = ''
 
         try:
-            lot_initsum = lot.find('{http://zakupki.gov.ru/223fz/purchase/1}currency'). \
-                find('{http://zakupki.gov.ru/223fz/types/1}code').text
+            lot_initsum = lot.find('{http://zakupki.gov.ru/223fz/purchase/1}initialSum').text
+
+            #print(lot_initsum)
             lot_initsum_int = float(lot_initsum)
+            #print (lot_initsum_int)
         except Exception:
             lot_initsum = ''
             lot_initsum_int = 0

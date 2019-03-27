@@ -1,4 +1,8 @@
 import os
+from profiling import time_of_function
+
+
+@time_of_function
 def clean_dir(folder):
     print("Cleaning folder:", folder)
     for the_file in os.listdir(folder):
